@@ -2,7 +2,10 @@ import asyncio
 import traceback
 from telethon import TelegramClient, errors
 
-from Emilia import API_HASH, API_ID, LOGGER, db, CLONE_LIMIT, SUPPORT_CHAT
+from Emilia import API_HASH, API_ID, LOGGER, db, CLONE_LIMIT, SUPPORT_CHAT, OWNER_ID
+
+# Note: OWNER_ID is imported from Emilia/__init__.py
+# It gets the value from Config.OWNER_ID or EMILIA_OWNER_ID env variable
 from Emilia.custom_filter import register, auth
 from Emilia.tele.clone_manager import clone_manager
 
@@ -288,20 +291,33 @@ async def set_startpic(event):
             f"**Preview URL:** {url}"
         )
 
+# ============================================
+# FIXED BROADCAST FUNCTION - Works on both main bot and cloned bots
+# ============================================
 @register(pattern="broadcast")
 async def broadcast(event):
-    if not getattr(event.client, "is_clone", False):
-        return await event.reply("**Broadcast is only available on cloned bots**\n\nPlease use your cloned bot to broadcast messages.")
+    # Check if user is authorized (Owner for main bot, Clone owner for cloned bots)
+    is_clone = getattr(event.client, "is_clone", False)
+    
+    if is_clone:
+        # For cloned bots - check if sender is the clone owner
+        me = await event.client.get_me()
+        bot_id = me.id
+        clone_info = await get_clone_info_by_bot_id(bot_id)
+        
+        if not clone_info or event.sender_id != clone_info["_id"]:
+            return await event.reply("You are not authorized to use this command.")
+    else:
+        # For main bot - only OWNER can broadcast
+        if event.sender_id != OWNER_ID:
+            return await event.reply("You are not authorized to use this command. Only the bot owner can broadcast.")
     
     if not event.reply_to_msg_id:
         return await event.reply("Please reply to a message to broadcast it!")
     
+    # Get bot_id for database queries
     me = await event.client.get_me()
     bot_id = me.id
-    clone_info = await get_clone_info_by_bot_id(bot_id)
-    
-    if not clone_info or event.sender_id != clone_info["_id"]:
-        return await event.reply("You are not authorized to use this command.")
     
     args = event.text.split(None, 1)
     if len(args) < 2 or args[1].lower() not in ["-all", "-users", "-chats"]:
@@ -394,3 +410,4 @@ async def clone_status(event):
 
 async def shutdown_all_clones():
     await clone_manager.stop_all_clones()
+    
