@@ -319,10 +319,19 @@ async def broadcast(event):
     me = await event.client.get_me()
     bot_id = me.id
     
+    # Check if this is main bot or cloned bot
+    is_main_bot = not is_clone
+    
     args = event.text.split(None, 1)
     if len(args) < 2 or args[1].lower() not in ["-all", "-users", "-chats"]:
-        user_count = await db.users.count_documents({"bot_ids": bot_id})
-        chat_count = await db.chats.count_documents({"bot_ids": bot_id})
+        # For main bot: count all users/chats
+        # For cloned bots: count only users/chats with bot_ids
+        if is_main_bot:
+            user_count = await db.users.count_documents({})
+            chat_count = await db.chats.count_documents({})
+        else:
+            user_count = await db.users.count_documents({"bot_ids": bot_id})
+            chat_count = await db.chats.count_documents({"bot_ids": bot_id})
         return await event.reply(
             f"Please provide a mode: `/broadcast -all`, `/broadcast -users`, or `/broadcast -chats`\n\n"
             f"**Users**: {user_count}\n"
@@ -335,25 +344,31 @@ async def broadcast(event):
     
     try:
         if mode == "-all":
-            us, uf = await broadcast_to_users(bot_id, reply, event.client)
-            cs, cf = await broadcast_to_chats(bot_id, reply, event.client)
+            us, uf = await broadcast_to_users(bot_id, reply, event.client, is_main_bot)
+            cs, cf = await broadcast_to_chats(bot_id, reply, event.client, is_main_bot)
             await wait.edit(
                 f"**Broadcast Complete**\n\n"
                 f"Users: {us} success, {uf} failed\n"
                 f"Chats: {cs} success, {cf} failed"
             )
         elif mode == "-users":
-            s, f = await broadcast_to_users(bot_id, reply, event.client)
+            s, f = await broadcast_to_users(bot_id, reply, event.client, is_main_bot)
             await wait.edit(f"**User Broadcast Complete**\n\nUsers: {s} success, {f} failed")
         else:
-            s, f = await broadcast_to_chats(bot_id, reply, event.client)
+            s, f = await broadcast_to_chats(bot_id, reply, event.client, is_main_bot)
             await wait.edit(f"**Chat Broadcast Complete**\n\nChats: {s} success, {f} failed")
     except Exception as e:
         LOGGER.error(f"Broadcast error: {e}")
         await wait.edit(f"Broadcast failed: {str(e)}")
 
-async def broadcast_to_users(bot_id, message, client):
-    cursor = db.users.find({"bot_ids": bot_id}, {"user_id": 1})
+async def broadcast_to_users(bot_id, message, client, is_main_bot=False):
+    # For main bot: get ALL users
+    # For cloned bots: get only users with this bot_id in bot_ids
+    if is_main_bot:
+        cursor = db.users.find({}, {"user_id": 1})
+    else:
+        cursor = db.users.find({"bot_ids": bot_id}, {"user_id": 1})
+    
     success, failed = 0, 0
     
     async for doc in cursor:
@@ -363,7 +378,8 @@ async def broadcast_to_users(bot_id, message, client):
             success += 1
             await asyncio.sleep(0.05)
         except errors.UserIsBlockedError:
-            await db.users.update_one({"user_id": uid}, {"$pull": {"bot_ids": bot_id}})
+            if not is_main_bot:
+                await db.users.update_one({"user_id": uid}, {"$pull": {"bot_ids": bot_id}})
             failed += 1
         except errors.FloodWaitError as e:
             await asyncio.sleep(min(e.seconds, 60))
@@ -373,8 +389,14 @@ async def broadcast_to_users(bot_id, message, client):
     
     return success, failed
 
-async def broadcast_to_chats(bot_id, message, client):
-    cursor = db.chats.find({"bot_ids": bot_id}, {"chat_id": 1})
+async def broadcast_to_chats(bot_id, message, client, is_main_bot=False):
+    # For main bot: get ALL chats
+    # For cloned bots: get only chats with this bot_id in bot_ids
+    if is_main_bot:
+        cursor = db.chats.find({}, {"chat_id": 1})
+    else:
+        cursor = db.chats.find({"bot_ids": bot_id}, {"chat_id": 1})
+    
     success, failed = 0, 0
     
     async for doc in cursor:
@@ -384,7 +406,8 @@ async def broadcast_to_chats(bot_id, message, client):
             success += 1
             await asyncio.sleep(0.05)
         except (errors.ChatWriteForbiddenError, errors.UserNotParticipantError):
-            await db.chats.update_one({"chat_id": cid}, {"$pull": {"bot_ids": bot_id}})
+            if not is_main_bot:
+                await db.chats.update_one({"chat_id": cid}, {"$pull": {"bot_ids": bot_id}})
             failed += 1
         except errors.FloodWaitError as e:
             await asyncio.sleep(min(e.seconds, 60))
@@ -410,4 +433,4 @@ async def clone_status(event):
 
 async def shutdown_all_clones():
     await clone_manager.stop_all_clones()
-    
+        
