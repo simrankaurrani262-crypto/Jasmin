@@ -12,7 +12,7 @@ class Config(object):
     API_ID =32772113
 
     BOT_ID = 521
-    BOT_USERNAME = "@Miss_JasminBot"
+    BOT_USERNAME = "Miss_JasminBot"
 
     MONGO_DB_URL = "mongodb+srv://rj5706603:O95nvJYxapyDHfkw@cluster0.fzmckei.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
