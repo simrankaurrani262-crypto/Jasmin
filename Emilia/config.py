@@ -11,7 +11,7 @@ class Config(object):
     API_HASH = "79b81186aefef9ca9216c646152ffe45"
     API_ID =32772113
 
-    BOT_ID = 521
+    BOT_ID = int(TOKEN.split(":")[0]) if ":" in TOKEN else 521
     BOT_USERNAME = "Miss_JasminBot"
 
     MONGO_DB_URL = "mongodb+srv://rj5706603:O95nvJYxapyDHfkw@cluster0.fzmckei.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
