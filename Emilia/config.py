@@ -11,6 +11,7 @@ class Config(object):
     API_HASH = "79b81186aefef9ca9216c646152ffe45"
     API_ID =32772113
 
+    TOKEN = os.getenv("TOKEN")
     BOT_ID = int(TOKEN.split(":")[0]) if ":" in TOKEN else 521
     BOT_USERNAME = "Miss_JasminBot"
 
@@ -20,7 +21,6 @@ class Config(object):
     UPDATE_CHANNEL = "lolspot"
     START_PIC = "https://pic-bstarstatic.akamaized.net/ugc/9e98b6c8872450f3e8b19e0d0aca02deff02981f.jpg@1200w_630h_1e_1c_1f.webp"
     DEV_USERS = [7028236763]
-    TOKEN = "8317830358:AAH_fcUdH1g8DpgwaRh3IoKpjiVEMUnc3Cw"
     CLONE_LIMIT = 50
 
     REDIS_URL = os.getenv("REDIS_URL", "rediss://default:AVJQAAIjcDEwNTYxNjg0MzQyNWI0YzQ2OWM1NjI4MTNhMjEzZWY0MXAxMA@fine-flounder-25319.upstash.io:6379")
