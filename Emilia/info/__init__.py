@@ -17,8 +17,9 @@ def getListOfFiles(dirName):
     return allFiles
 
 
+tele_dir = os.path.join(dirname(dirname(__file__)), "tele")
 mod_paths = getListOfFiles(dirName=dirname(__file__)) + getListOfFiles(
-    dirName=dirname(os.getcwd() + "/Emilia/tele/__init__.py")
+    dirName=tele_dir
 )
 
 all_modules = [
