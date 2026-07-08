@@ -289,7 +289,7 @@ async def reset_conversation(event):
         LOGGER.error(f"[GroqChat] Reset error for {event.sender_id}: {e}")
         await event.reply("Failed to reset conversation.")
 
-@telethn.on(events.NewMessage)
+@telethn.on(events.NewMessage(incoming=True, pattern=r"(?s).+"))
 async def message_handler(event):
     purgeSessions()
     

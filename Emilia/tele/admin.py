@@ -486,7 +486,7 @@ async def _(event):
         try:
             await meow(EditBannedRequest(event.chat_id, i, rights))
         except FloodWaitError as ex:
-            LOGGER.warn("sleeping for {} seconds".format(ex.seconds))
+            LOGGER.warning("sleeping for {} seconds".format(ex.seconds))
             await asyncio.sleep(ex.seconds)
         except Exception as ex:
             await event.reply(str(ex))
@@ -520,7 +520,7 @@ async def _(event):
         try:
             await meow(EditBannedRequest(event.chat_id, i, rights))
         except FloodWaitError as ex:
-            LOGGER.warn("sleeping for {} seconds".format(ex.seconds))
+            LOGGER.warning("sleeping for {} seconds".format(ex.seconds))
             await asyncio.sleep(ex.seconds)
         except Exception as ex:
             await event.reply(str(ex))

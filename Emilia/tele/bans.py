@@ -228,7 +228,7 @@ async def ban(event):
 
 @register(pattern="sban")
 @exception
-async def ban(event):
+async def sban_cmd(event):
     if not event.is_group:
         return await event.reply(strings.is_pvt)
     if not event.from_id:
