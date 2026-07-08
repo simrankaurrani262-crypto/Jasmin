@@ -355,7 +355,7 @@ async def sendResponse(event, response: str):
         finally:
             if os.path.exists(temp_path):
                 os.remove(temp_path)
-        else:
+    else:
         await event.reply(response)
 
 async def shutdown_chatbot(): # ✅ Bilkul left side se shuru karein

@@ -1,6 +1,7 @@
 # DONE: Telegraph
 
 import os
+import asyncio
 from datetime import datetime
 
 from PIL import Image
@@ -33,17 +34,22 @@ async def _(event):
             resize_image(downloaded_file_name)
         try:
             start = datetime.now()
-            media_urls = uploader.upload_file(downloaded_file_name)
-        except:
-            os.remove(downloaded_file_name)
-        else:                
+            loop = asyncio.get_running_loop()
+            media_urls = await loop.run_in_executor(
+                None, uploader.upload_file, downloaded_file_name
+            )
+        except Exception:
+            if downloaded_file_name and os.path.exists(downloaded_file_name):
+                os.remove(downloaded_file_name)
+        else:
             end = datetime.now()
             ms_two = (end - start).seconds
-            os.remove(downloaded_file_name)
+            if downloaded_file_name and os.path.exists(downloaded_file_name):
+                os.remove(downloaded_file_name)
             await h.edit(
                 f"Uploaded to [Catbox]({media_urls}) in {ms + ms_two} seconds.",
                 link_preview=True,
-            )       
+            )
     else:
         await event.reply("Reply to a message to get a permanent catbox link.")
 

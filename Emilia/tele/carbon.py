@@ -23,14 +23,17 @@ async def cba(event):
         if msg.media:
             if isinstance(msg.media, types.MessageMediaDocument):
                 file = await telethn.download_media(msg)
-                f = open(file)
                 try:
-                    code = f.read()
+                    with open(file, "r", encoding="utf-8") as f:
+                        code = f.read()
                 except Exception as ef:
                     LOGGER.error(ef)
+                    if os.path.exists(file):
+                        os.remove(file)
                     return await event.reply("Reply to some readable document!")
-                f.close()
-                os.remove(file)
+                finally:
+                    if os.path.exists(file):
+                        os.remove(file)
             else:
                 if msg.text:
                     code = msg.raw_text
@@ -60,9 +63,9 @@ async def cba(event):
     cb = carbon.Carbon()
     try:
         img = await cb.generate(options)
+        await img.save("carbon")
+        await event.respond(file="carbon.png")
     except Exception as e:
         LOGGER.error(e)
         await event.reply(f"Some error occured! Please report to @{SUPPORT_CHAT}")
-    await img.save("carbon")
-    await event.respond(file="carbon.png")
     await res.delete()

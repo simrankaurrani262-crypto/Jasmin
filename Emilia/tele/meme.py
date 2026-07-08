@@ -28,7 +28,7 @@ MemesReddit = [
 @register(pattern="memes", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def memes_cmd(event):
     memereddit = random.choice(MemesReddit)
     meme_link = f"https://meme-api.com/gimme/{memereddit}"
     q = await get(meme_link)
@@ -39,7 +39,7 @@ async def mimi(event):
 @register(pattern="dank", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def dank_cmd(event):
     meme_link = "https://meme-api.com/gimme/dankmemes"
     q = await get(meme_link)
     q_json = q.json()
@@ -49,7 +49,7 @@ async def mimi(event):
 @register(pattern="lolimeme", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def lolimeme_cmd(event):
     meme_link = "https://meme-api.com/gimme/LoliMemes"
     q = await get(meme_link)
     q_json = q.json()
@@ -59,7 +59,7 @@ async def mimi(event):
 @register(pattern="hornyjail", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def hornyjail_cmd(event):
     meme_link = "https://meme-api.com/gimme/Hornyjail"
     q = await get(meme_link)
     q_json = q.json()
@@ -69,7 +69,7 @@ async def mimi(event):
 @register(pattern="wmeme", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def wmeme_cmd(event):
     meme_link = "https://meme-api.com/gimme/wholesomememes"
     q = await get(meme_link)
     q_json = q.json()
@@ -79,7 +79,7 @@ async def mimi(event):
 @register(pattern="pewds", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def pewds_cmd(event):
     meme_link = "https://meme-api.com/gimme/PewdiepieSubmissions"
     q = await get(meme_link)
     q_json = q.json()
@@ -89,7 +89,7 @@ async def mimi(event):
 @register(pattern="hmeme", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def hmeme_cmd(event):
     meme_link = "https://meme-api.com/gimme/hornyresistance"
     q = await get(meme_link)
     q_json = q.json()
@@ -99,7 +99,7 @@ async def mimi(event):
 @register(pattern="teen", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def teen_cmd(event):
     meme_link = "https://meme-api.com/gimme/teenagers"
     q = await get(meme_link)
     q_json = q.json()
@@ -109,7 +109,7 @@ async def mimi(event):
 @register(pattern="fbi", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def fbi_cmd(event):
     meme_link = "https://meme-api.com/gimme/FBI_Memes"
     q = await get(meme_link)
     q_json = q.json()
@@ -119,7 +119,7 @@ async def mimi(event):
 @register(pattern="shitposting", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def shitposting_cmd(event):
     meme_link = "https://meme-api.com/gimme/shitposting"
     q = await get(meme_link)
     q_json = q.json()
@@ -129,7 +129,7 @@ async def mimi(event):
 @register(pattern="cursed", disable=True)
 @disable
 @exception
-async def mimi(event):
+async def cursed_cmd(event):
     meme_link = "https://meme-api.com/gimme/cursedcomments"
     q = await get(meme_link)
     q_json = q.json()

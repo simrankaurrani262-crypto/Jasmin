@@ -530,7 +530,7 @@ async def can_collect(user_id, chat_id):
 
 
 @register(pattern="weekly")
-async def _daily(event):
+async def _weekly(event):
     if not event.is_group:
         return await event.reply(
             "You can only claim your daily bonus of 500 points inside a group chat!"
