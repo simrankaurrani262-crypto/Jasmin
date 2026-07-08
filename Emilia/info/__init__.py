@@ -34,6 +34,6 @@ module_names = [
     if isfile(f) and f.endswith(".py") and not f.endswith("__init__.py")
 ]
 
-LOGGER.error(("INFO - " f"{', '.join(module_names)} - MODULES LOADED"))
+LOGGER.info("MODULES LOADED - " + ", ".join(module_names))
 ALL_MODULES = sorted(all_modules)
 __all__ = ALL_MODULES + ["ALL_MODULES"]
