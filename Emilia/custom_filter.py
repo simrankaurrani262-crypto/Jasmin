@@ -10,6 +10,9 @@ from telethon import events
 
 from Emilia import BOT_USERNAME, DEV_USERS, telethn, LOGGER
 
+# Compile regex once for the bot username mention pattern
+_BOT_USERNAME_PATTERN = re.compile(re.escape(BOT_USERNAME), re.IGNORECASE)
+
 DISABLE_COMMANDS = []
 HANDLERS_REGISTRY = [] # List of (handler_func, event_type, args)
 
@@ -154,8 +157,8 @@ def register(disable: bool = False, **args):
     command_pattern = args.get("pattern")
     command_lister(command_pattern, disable)
 
-    args["pattern"] = r"(?i)^(?:/|!)(?:{})\s?(?:@Elf_Robot)?(?:\s|$)([\s\S]*)$".format(
-        command_pattern
+    args["pattern"] = r"(?i)^(?:/|!)(?:{})\s?(?:@{})?(?:\s|$)([\s\S]*)$".format(
+        command_pattern, re.escape(BOT_USERNAME)
     )
 
     def decorator(func):
@@ -183,8 +186,8 @@ def callbackquery(**args):
 
 def auth(**args):
     command_pattern = args.get("pattern")
-    args["pattern"] = r"(?i)^(?:/|!)(?:{})\s?(?:@Elf_Robot)?(?:\s|$)([\s\S]*)$".format(
-        command_pattern
+    args["pattern"] = r"(?i)^(?:/|!)(?:{})\s?(?:@{})?(?:\s|$)([\s\S]*)$".format(
+        command_pattern, re.escape(BOT_USERNAME)
     )
     args["from_users"] = DEV_USERS
 

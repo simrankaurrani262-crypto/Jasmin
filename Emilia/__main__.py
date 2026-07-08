@@ -139,6 +139,14 @@ async def main():
 
     await create_indexes()
 
+    # Start Telethon client
+    try:
+        await telethn.start(bot_token=TOKEN)
+        LOGGER.info("Telethon client started successfully.")
+    except Exception as e:
+        LOGGER.error(f"Failed to start Telethon client: {e}")
+        raise
+
     import_modules()
     LOGGER.info("All modules loaded.")
 

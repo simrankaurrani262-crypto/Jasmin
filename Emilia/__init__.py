@@ -167,7 +167,7 @@ pgram.is_clone = False
 pgram.owner_id = OWNER_ID
 
 anibot = Client(name=f"{SESSION_NAME}_anibot", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN, sleep_threshold=0, plugins=plugins)
-telethn = TelegramClient(f"{SESSION_NAME}_tele", API_ID, API_HASH).start(bot_token=TOKEN)
+telethn = TelegramClient(f"{SESSION_NAME}_tele", API_ID, API_HASH)
 telethn.is_clone = False
 
 

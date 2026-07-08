@@ -23,8 +23,8 @@ class Config(object):
     TOKEN = "8317830358:AAH_fcUdH1g8DpgwaRh3IoKpjiVEMUnc3Cw"
     CLONE_LIMIT = 50
 
-    REDIS_URL = os.getenv("REDIS_URL", "https://fine-flounder-25319.upstash.io")
-    REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", None)
+    REDIS_URL = os.getenv("REDIS_URL", "rediss://default:AVJQAAIjcDEwNTYxNjg0MzQyNWI0YzQ2OWM1NjI4MTNhMjEzZWY0MXAxMA@fine-flounder-25319.upstash.io:6379")
+    REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", "AVJQAAIjcDEwNTYxNjg0MzQyNWI0YzQ2OWM1NjI4MTNhMjEzZWY0MXAxMA")
 
     EVENT_LOGS = -1003877180460
     OWNER_ID = 7028236763
