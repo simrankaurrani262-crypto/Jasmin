@@ -64,7 +64,7 @@ async def get_user_reason(event):
             elif isinstance(ent, MessageEntityTextUrl):
                 if ent.url.startswith("tg://user?id="):
                     users = int(ent.url.split("=")[1])
-                
+
             if users is not None:
                 try:
                     user_input = await meow.get_entity(ctypeof(users))
@@ -447,10 +447,10 @@ async def update_cache_periodically():
             batch_size = 200
             cursor = cache_collection.find({}, {"chat_id": 1, "user_id": 1}, batch_size=500)
             batch = []
-            
+
             async for entry in cursor:
                 batch.append(entry)
-                
+
                 if len(batch) >= batch_size:
                     # Process batch
                     await process_admin_cache_batch(batch)
@@ -461,17 +461,17 @@ async def update_cache_periodically():
                     except asyncio.CancelledError:
                         LOGGER.info("Admin cache update task cancelled.")
                         return
-            
+
             # Process remaining entries
             if batch:
                 await process_admin_cache_batch(batch)
-                
+
         except asyncio.CancelledError:
             LOGGER.info("Admin cache update task cancelled.")
             break
         except Exception as e:
             LOGGER.error(f"Error in admin cache update periodic task: {e}")
-            
+
         try:
             await asyncio.sleep(600)  # 10 minutes
         except asyncio.CancelledError:
@@ -484,6 +484,11 @@ async def process_admin_cache_batch(batch):
     for entry in batch:
         chat_id = entry["chat_id"]
         user_id = int(entry["user_id"])
+
+        # Check if client is connected before making request
+        if not meow.is_connected():
+            LOGGER.warning("Telethon client disconnected during admin cache update. Stopping batch.")
+            break
 
         try:
             p = await meow(GetParticipantRequest(chat_id, user_id))
@@ -499,15 +504,18 @@ async def process_admin_cache_batch(batch):
             pass
         except errors.ChannelPrivateError:
             pass
+        except (ConnectionError, OSError) as e:
+            LOGGER.warning(f"Connection error during admin cache update for {user_id}: {e}. Stopping batch.")
+            break
         except asyncio.CancelledError:
             # Task was cancelled, stop processing
             break
         except Exception as e:
             LOGGER.error(f"Error updating admin cache for {user_id}: {e}")
-            
-        # Small delay between each user to avoid rate limits
+
+        # Small delay between each user to avoid rate limits (increased from 0.05s to 0.2s)
         try:
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0.2)
         except asyncio.CancelledError:
             break
 
