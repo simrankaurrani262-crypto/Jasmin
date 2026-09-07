@@ -162,11 +162,13 @@ redis_client = redis.from_url(Config.REDIS_URL, decode_responses=True)
 db.redis_client = redis_client
 
 # Initialize clients
-pgram = Client(name=SESSION_NAME, api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN, workers=32, plugins=pyro_plugins, sleep_threshold=0)
+# FIXED: sleep_threshold changed from 0 to 60 to allow Pyrogram to auto-handle FloodWait errors
+pgram = Client(name=SESSION_NAME, api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN, workers=32, plugins=pyro_plugins, sleep_threshold=60)
 pgram.is_clone = False
 pgram.owner_id = OWNER_ID
 
-anibot = Client(name=f"{SESSION_NAME}_anibot", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN, sleep_threshold=0, plugins=plugins)
+# FIXED: sleep_threshold changed from 0 to 60
+anibot = Client(name=f"{SESSION_NAME}_anibot", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN, sleep_threshold=60, plugins=plugins)
 telethn = TelegramClient(f"{SESSION_NAME}_tele", API_ID, API_HASH)
 telethn.is_clone = False
 
@@ -198,7 +200,7 @@ async def create_indexes():
     notes = db.notes
     filters = db.filters
     welcome = db.welcome
-    
+
     warn_settings = db.warn_settings
     user_warnings = db.user_warnings
 
